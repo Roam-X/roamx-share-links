@@ -73,12 +73,15 @@ export default async function SharePage({
       style={{
         minHeight: '100vh',
         fontFamily: 'system-ui',
-        padding: 32,
-        display: 'grid',
-        placeItems: 'center',
+        padding: '24px 16px 32px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 16,
         background:
           'radial-gradient(1200px 600px at 20% -10%, #1c1f24, #0f1114 60%)',
         color: '#f5f7fb',
+        boxSizing: 'border-box',
       }}
     >
       <div
@@ -88,14 +91,15 @@ export default async function SharePage({
           background: '#14171c',
           border: '1px solid #222832',
           borderRadius: 20,
-          padding: 24,
+          padding: '20px 16px',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.45)',
+          boxSizing: 'border-box',
         }}
       >
         <div
           style={{
             width: '100%',
-            height: 320,
+            height: 'clamp(200px, 52vw, 320px)',
             borderRadius: 16,
             overflow: 'hidden',
             background: '#0b0d10',
@@ -124,13 +128,28 @@ export default async function SharePage({
           )}
         </div>
         <div style={{ marginTop: 18 }}>
-          <h1 style={{ margin: 0, fontSize: 28, lineHeight: 1.2 }}>{title}</h1>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 'clamp(22px, 5vw, 28px)',
+              lineHeight: 1.2,
+            }}
+          >
+            {title}
+          </h1>
           {share?.description ? (
             <p style={{ marginTop: 10, color: '#b9c0cc' }}>{description}</p>
           ) : null}
         </div>
       </div>
-      <p style={{ marginTop: 20, color: '#cfd5df', textAlign: 'center' }}>
+      <p
+        style={{
+          marginTop: 4,
+          color: '#cfd5df',
+          textAlign: 'center',
+          maxWidth: 520,
+        }}
+      >
         To view this content, download Roam X and open the shared link in the
         app.
       </p>
@@ -138,10 +157,10 @@ export default async function SharePage({
         style={{
           width: '100%',
           maxWidth: 520,
-          marginTop: 12,
+          marginTop: 4,
           display: 'grid',
           gap: 12,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
         }}
       >
         {APP_STORE_URL ? (
