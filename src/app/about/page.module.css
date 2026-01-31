@@ -19,13 +19,14 @@
 
 .logo {
   text-align: center;
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: var(--font-arsenal);
   font-weight: 700;
   font-style: italic;
+  font-variant: small-caps;
   letter-spacing: 0.12em;
   margin: 0 0 18px;
-  font-size: 22px;
-}
+  font-size: 32px;
+} 
 
 .content {
   font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
@@ -81,7 +82,7 @@
   }
 
   .logo {
-    font-size: 18px;
+    font-size: 26px;
   }
 
   .content {
