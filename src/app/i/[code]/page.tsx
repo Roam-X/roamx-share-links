@@ -31,11 +31,18 @@ export async function generateMetadata({
   params: Promise<{ code: string }>;
 }): Promise<Metadata> {
   const { code } = await params;
-  const url = `${CANONICAL_BASE_URL}/i/${parseCode(code) ?? ''}`;
+  // Only build an absolute URL when CANONICAL_BASE_URL is actually configured
+  // — unconditionally prepending it would emit a bare relative path like
+  // "/i/abc23456" when it is unset, which is invalid for both openGraph.url
+  // and a canonical tag. Same guard /get and /s/[shareId] already use.
+  const url = CANONICAL_BASE_URL
+    ? `${CANONICAL_BASE_URL}/i/${parseCode(code) ?? ''}`
+    : undefined;
 
   return {
     title: TITLE,
     description: DESCRIPTION,
+    alternates: url ? { canonical: url } : undefined,
     openGraph: {
       title: TITLE,
       description: DESCRIPTION,
