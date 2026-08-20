@@ -10,13 +10,19 @@ const TITLE = 'You have been invited to Roam X';
 const DESCRIPTION =
   'Download Roam X and use this invite code so your friend gets credit.';
 
-/** Codes are 8 chars from a no-ambiguous-characters alphabet; see referral_service. */
-function normalizeCode(raw: string): string {
-  return raw
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '')
-    .slice(0, 16);
+/**
+ * Codes are always exactly 8 chars from a no-ambiguous-characters alphabet —
+ * see CODE_LENGTH / _ALPHABET in referral_service.py (a-z minus l/o, 2-9,
+ * never 0/1). Validated against that exact shape rather than repaired: a
+ * link that has been truncated, corrupted, or tampered with should show the
+ * "incomplete" fallback, not have its stray characters silently stripped out
+ * and be handed to CopyCode as if it were a real, issued code.
+ */
+const CODE_PATTERN = /^[a-km-np-z2-9]{8}$/;
+
+function parseCode(raw: string): string | null {
+  const candidate = raw.trim().toLowerCase();
+  return CODE_PATTERN.test(candidate) ? candidate : null;
 }
 
 export async function generateMetadata({
@@ -25,7 +31,7 @@ export async function generateMetadata({
   params: Promise<{ code: string }>;
 }): Promise<Metadata> {
   const { code } = await params;
-  const url = `${CANONICAL_BASE_URL}/i/${normalizeCode(code)}`;
+  const url = `${CANONICAL_BASE_URL}/i/${parseCode(code) ?? ''}`;
 
   return {
     title: TITLE,
@@ -55,7 +61,7 @@ export default async function InvitePage({
   params: Promise<{ code: string }>;
 }) {
   const { code } = await params;
-  const inviteCode = normalizeCode(code);
+  const inviteCode = parseCode(code);
 
   return (
     <main
@@ -101,26 +107,44 @@ export default async function InvitePage({
         </h1>
 
         {inviteCode ? (
-          <CopyCode code={inviteCode} />
+          <>
+            <CopyCode code={inviteCode} />
+            <ol
+              style={{
+                margin: 0,
+                paddingLeft: 20,
+                color: '#b9c0cc',
+                lineHeight: 1.6,
+                alignSelf: 'stretch',
+              }}
+            >
+              <li>Download Roam X.</li>
+              <li>Create your account.</li>
+              <li>Enter the code above so your friend gets credit.</li>
+            </ol>
+          </>
         ) : (
-          <p style={{ margin: 0, color: '#b9c0cc', textAlign: 'center' }}>
-            That invite link looks incomplete. Ask your friend to send it again.
-          </p>
+          <>
+            <p style={{ margin: 0, color: '#b9c0cc', textAlign: 'center' }}>
+              That invite link looks incomplete. Ask your friend to send it
+              again.
+            </p>
+            {/* No code was shown above, so the instructions cannot tell the
+                user to enter it — that was the previous bug this replaces. */}
+            <ol
+              style={{
+                margin: 0,
+                paddingLeft: 20,
+                color: '#b9c0cc',
+                lineHeight: 1.6,
+                alignSelf: 'stretch',
+              }}
+            >
+              <li>Download Roam X.</li>
+              <li>Create your account.</li>
+            </ol>
+          </>
         )}
-
-        <ol
-          style={{
-            margin: 0,
-            paddingLeft: 20,
-            color: '#b9c0cc',
-            lineHeight: 1.6,
-            alignSelf: 'stretch',
-          }}
-        >
-          <li>Download Roam X.</li>
-          <li>Create your account.</li>
-          <li>Enter the code above so your friend gets credit.</li>
-        </ol>
       </div>
 
       <div
